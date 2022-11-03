@@ -26,25 +26,27 @@ export enum Topic{
 export default function Home() {
   const date = new Date();
 
-  const obj = {
+  const jsonQuestion: {[k: string]: any} = {
     "creationData": date.toLocaleDateString('zh-Hans-CN'),
     "authorID": "955361",
     "reviewerID": "",
+
     "questionType": "multipleChoice",
   }
 
   const [topic, setTopic] = useState('')
+  const [subtopic, setSubtopic] = useState('')
   const [difficulty, setDifficulty] = useState(2)
   const [question, setQuestion] = useState('')
-  const [answers, setAnswers] = useState(['', '', '', ''])
-  const [correctAns, setCorrectAns ] = useState(0)
+  const [choices, setChoices] = useState(['', '', '', ''])
+  const [answer, setAnswer ] = useState(0)
   const [references, setReferences] = useState<string[]>([])
 
 
   const handleOnAnswerChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    let newArr = [...answers]
+    let newArr = [...choices]
     newArr[index] = e.target.value
-    setAnswers(newArr)
+    setChoices(newArr)
   }
 
 
@@ -53,8 +55,20 @@ export default function Home() {
     setTopic(topic)
   }
 
+  const onSubmit = (e: React.SyntheticEvent) => {
+    e.preventDefault()
+    jsonQuestion['questionTopic'] = topic
+    jsonQuestion['questionSubtopic'] = subtopic
+    jsonQuestion['questionDifficulty'] = difficulty
+    jsonQuestion['question'] = question
+    jsonQuestion['choices'] = choices
+    jsonQuestion['answers'] = answer
+    jsonQuestion['educationLinks'] = references
+    console.log(JSON.stringify(jsonQuestion))
+  }
+
   return (
-    <form className='grid grid-cols-2 md:gap-x-20 gap-y-[3.5rem] md:ml-[-20rem]'>
+    <form className='grid grid-cols-2 md:gap-x-20 gap-y-[2.5rem] md:ml-[-20rem]' onSubmit={(e) => onSubmit(e)}>
       <h1 className='text-center font-bold col-span-2 md:ml-[20rem]'>Question JSON Generator</h1>
       <label className='text-center md:text-right'>Topic</label>
       <div className='flex'>
@@ -62,19 +76,21 @@ export default function Home() {
         <div className='md:px-5'/>
         <RadioButton name='Angular' topic={Topic.Angular} handleRadioClick={handleRadioClick}></RadioButton>
       </div>
+      <label className='text-center md:text-right'>Subtopic</label>
+      <textarea className="textarea textarea-info md:w-[15vw] sm:w-[20vw] h-10" placeholder="Question" onChange={(e) => setSubtopic(e.target.value)}></textarea>
       <label className='text-center md:text-right'>Difficulty</label>
       <input type="range" min="1" max="3" className="range range-info range-sm md:w-[15vw] sm:w-[20vw]" onChange={(e) => setDifficulty(parseInt(e.target.value))} />
       <label className='text-center md:text-right'>Question</label>
       <textarea className="textarea textarea-info md:w-[15vw] sm:w-[20vw] h-10" placeholder="Question" onChange={(e) => setQuestion(e.target.value)}></textarea>
       <div className='flex flex-col text-center md:text-right gap-y-7'>
         {/* <div> <input type="radio" name="radio-10" className='radio translate-y-[.8vh] mr-3'></input><label>Answer 1</label></div> */}
-        {[answers.map((x,i) =>
-            <div key={i} > <input type="radio" name="radio-2" className='radio translate-y-[.8vh] mr-3 checked:bg-green-500' onClick={() => setCorrectAns(i)}></input><label>Answer {i+1}</label></div>
+        {[choices.map((x,i) =>
+            <div key={i} > <input type="radio" name="radio-2" className='radio translate-y-[.8vh] mr-3 checked:bg-green-500' onClick={() => setAnswer(i)}></input><label>Answer {i+1}</label></div>
           )]}
 
       </div>
       <div className='flex flex-col gap-y-4'>
-        {[answers.map((x,i) =>
+        {[choices.map((x,i) =>
              <input key={i} type="text" placeholder="Type here" className="input input-bordered input-info w-full max-w-xs h-[5vh]" onChange={(e) => handleOnAnswerChange(e, i)} />
           )]}
       </div>
