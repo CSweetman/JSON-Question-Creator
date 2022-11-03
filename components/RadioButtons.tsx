@@ -10,8 +10,8 @@ interface RadioInterface {
 const RadioButton = ({name, topic, handleRadioClick} : RadioInterface) => {
   return (
     <>
-        <span className="label-text">{name}</span> 
-        <input type="radio" name="radio-10" className="radio checked:bg-blue-500" onChange={(e) => handleRadioClick(e, topic)}  />
+        <span className="pr-3">{name}</span> 
+        <input type="radio" name="radio-1" className={`radio ${topic === 'React' ? 'checked:bg-blue-500' : 'checked:bg-red-500'}`} onChange={(e) => handleRadioClick(e, topic)}  />
     </>
   )
 }
